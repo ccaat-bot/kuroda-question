@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>观测记录 · 第 12 号</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:10px;background:radial-gradient(circle at 50% 0%,#1c1216 0%,#0a0708 65%);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+.phone{position:relative;width:320px;height:650px;background:#fff;border-radius:45px;border:12px solid #1a1a1a;box-shadow:0 12px 34px rgba(0,0,0,.45);overflow:hidden;flex-shrink:0;}
+.phone.glitch{animation:shk .45s ease;}
+@keyframes shk{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(3px);}}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:30px;background:#000;border-radius:20px;z-index:100;}
+.clock{position:absolute;top:22px;left:34px;font-size:12px;font-weight:600;letter-spacing:.04em;z-index:99;color:#3a2b31;mix-blend-mode:multiply;}
+.mutebtn{position:absolute;top:20px;right:28px;z-index:99;font-size:13px;cursor:pointer;color:#3a2b31;mix-blend-mode:multiply;user-select:none;letter-spacing:.04em;}
+.screen{position:absolute;top:0;left:0;width:100%;height:100%;overflow-y:auto;padding:58px 18px 30px;transition:background-color 1.2s ease,color 1.2s ease;}
+.t0{background:#f7f6f7;color:#1f2937;--line:rgba(40,30,40,.16);--panel:rgba(255,255,255,.72);--accent:#8c1b26;--muted:#6b7280;}
+.t1{background:#ebe5eb;color:#2b2430;--line:rgba(50,35,50,.18);--panel:rgba(255,255,255,.55);--accent:#7a1730;--muted:#6d6070;}
+.t2{background:#dcd0da;color:#2a1f2a;--line:rgba(60,30,55,.22);--panel:rgba(255,255,255,.42);--accent:#8c1b26;--muted:#6a5a6a;}
+.t3{background:#2a1a20;color:#ece0e4;--line:rgba(255,180,190,.22);--panel:rgba(255,255,255,.06);--accent:#ff7f8b;--muted:#b0939a;}
+.t4{background:#140a0e;color:#ecd8dd;--line:rgba(255,150,165,.25);--panel:rgba(255,255,255,.05);--accent:#ff5b6b;--muted:#a8838c;}
+.hidden{display:none;}
+#intro{padding-top:22px;text-align:center;}
+.tag{display:inline-block;font-size:10px;letter-spacing:.2em;padding:4px 12px;border-radius:20px;border:1px solid var(--line);color:var(--muted);}
+#intro h1{font-size:23px;line-height:1.5;letter-spacing:.06em;margin:18px 0 10px;font-weight:800;}
+#intro .sub{font-size:12.5px;line-height:2;color:var(--muted);letter-spacing:.06em;margin:0 0 6px;}
+.rule{width:46px;height:1px;background:var(--accent);margin:22px auto;}
+#startBtn{padding:12px 40px;border-radius:26px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:inherit;font-size:14px;letter-spacing:.14em;cursor:pointer;transition:.25s;}
+#startBtn:hover{background:var(--accent);color:#fff;}
+.small{margin-top:26px;font-size:10.5px;line-height:1.9;color:var(--muted);letter-spacing:.04em;}
+.obsbar{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:10px;color:var(--muted);letter-spacing:.05em;margin-bottom:10px;padding:7px 9px;border:1px dashed var(--line);border-radius:8px;line-height:1.6;}
+.obsbar b{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;}
+.obsnote{margin-top:9px;font-size:10.5px;line-height:1.8;color:var(--accent);letter-spacing:.07em;min-height:14px;}
+.qmeta{display:flex;align-items:center;justify-content:space-between;font-size:10.5px;letter-spacing:.1em;color:var(--muted);margin-bottom:8px;}
+.prog{height:3px;border-radius:3px;background:var(--line);overflow:hidden;margin-bottom:18px;}
+.progfill{height:100%;width:0;background:var(--accent);transition:width .5s ease;}
+.qtext{font-size:16.5px;line-height:1.95;letter-spacing:.03em;margin-bottom:18px;font-weight:600;animation:fadein .5s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.opt{display:block;width:100%;text-align:left;padding:13px 14px;margin-bottom:9px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:inherit;font-family:inherit;font-size:13.5px;line-height:1.75;cursor:pointer;transition:.22s;animation:fadein .45s ease both;}
+.opt:hover{border-color:var(--accent);transform:translateX(2px);}
+.opt.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;}
+.opt.lock{pointer-events:none;opacity:.45;}
+.opt.sel.lock{opacity:1;}
+.opt.rewritten{opacity:1;}
+.del{text-decoration:line-through;opacity:.45;margin-right:8px;}
+.new{color:var(--accent);font-weight:700;letter-spacing:.02em;}
+.react{margin-top:14px;padding:12px 13px;border-left:2px solid var(--accent);background:var(--panel);border-radius:0 8px 8px 0;font-size:13px;line-height:1.95;letter-spacing:.02em;animation:fadein .5s ease;}
+.react .who{display:block;font-size:10px;letter-spacing:.16em;color:var(--accent);margin-bottom:6px;}
+.whisperline{margin-top:10px;font-size:11.5px;line-height:1.9;color:var(--muted);letter-spacing:.06em;animation:fadein .6s ease;}
+.nextbtn{width:100%;margin-top:16px;padding:12px;border-radius:10px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:inherit;font-size:13.5px;letter-spacing:.12em;cursor:pointer;transition:.25s;animation:fadein .5s ease;}
+.nextbtn:hover{background:var(--accent);color:#fff;}
+#result{padding-top:6px;animation:fadein .6s ease;}
+#result h2{font-size:19px;line-height:1.7;letter-spacing:.06em;margin:14px 0 14px;}
+#result p{font-size:13px;line-height:2.05;color:inherit;margin:0 0 13px;letter-spacing:.02em;opacity:.92;}
+.stamp{display:inline-block;font-size:10px;letter-spacing:.18em;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:3px 9px;transform:rotate(-2deg);}
+.strike{text-decoration:line-through;opacity:.5;}
+.endline{margin-top:20px;font-size:10.5px;line-height:1.9;color:var(--muted);letter-spacing:.04em;}
+.scare{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(6,2,4,.94);display:none;align-items:center;justify-content:center;z-index:200;text-align:center;padding:26px;}
+.scare.on{display:flex;animation:scareIn .16s ease;}
+.scare span{font-size:27px;font-weight:800;color:#ff6b7a;letter-spacing:.2em;line-height:1.7;text-shadow:0 0 32px rgba(255,50,75,.75);}
+@keyframes scareIn{from{opacity:0;}to{opacity:1;}}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+<div class="notch"></div>
+<div class="clock" id="clock">12:00</div>
+<div class="mutebtn" id="muteBtn">声音：开</div>
+<div class="scare" id="scare"><span id="scareText"></span></div>
+<div class="screen t0" id="screen">
+<div id="intro">
+<span class="tag">观测记录 · 第 12 号</span>
+<h1>您没有同意过<br>这份问卷</h1>
+<p class="sub">一共二十道题。<br>做完一道，我才给您下一道。</p>
+<div class="rule"></div>
+<button id="startBtn">开始作答</button>
+<p class="small">本次问卷不计入档案。<br>进度会在您关闭这一页之后继续保留。</p>
+</div>
+<div id="qbox" class="hidden">
+<div class="obsbar"><span>观测中 <b id="obsTime">00:00</b></span><span>点击 <b id="obsClicks">0</b> 次</span><span>本题用时 <b id="obsDelay">—</b></span><span>设备 <b id="obsDev">—</b></span><span>电量 <b id="obsBat">—</b></span></div>
+<div class="qmeta"><span id="qidx">第 1 题</span><span>共 20 题</span></div>
+<div class="prog"><div class="progfill" id="progfill"></div></div>
+<div class="qtext" id="qtext"></div>
+<div id="opts"></div>
+<div id="reactBox"></div>
+<div class="obsnote" id="obsNote"></div>
+</div>
+<div id="result" class="hidden"></div>
+</div>
+</div>
+<script>
+(function(){
+var QS=[
+{q:"您每天早上醒来时，第一件事通常是？",o:[
+{t:"看一眼时间",v:0,r:"很规律。这个习惯我记下了。"},
+{t:"再躺一会儿",v:0,r:"再躺一会儿也可以。我不催您。"},
+{t:"先看手机",v:1,r:"屏幕的光会映在您脸上。那道光我认得。"},
+{t:"什么都不做，先听一会儿屋里的声音",v:2,r:"听着。屋里的声音。……您听见了什么，回头跟我说一声。"}]},
+{q:"您更喜欢在什么天气出门？",o:[
+{t:"晴天",v:0,r:"太阳晒着的时候，您的脚步会比平时快一些。"},
+{t:"阴天",v:0,r:"阴天您更愿意站在走廊上，一站就是很久。"},
+{t:"下雨天",v:1,r:"雨声把别的声音都盖住了。这样的日子很好。"},
+{t:"不出门最好",v:2,r:"不出门也好。省得路上有人多看您两眼。"}]},
+{q:"您在本丸最喜欢做的事是？",o:[
+{t:"画画",v:0,r:"您画画时眉头会收起来。那副样子我看过很多回。"},
+{t:"看书",v:0,r:"翻页的声音很轻，我在门外也听得见。"},
+{t:"打游戏",v:1,r:"打完就早些歇，别又拖到天亮。"},
+{t:"什么都不做地待着",v:2,r:"待着也好。请待在我看得见的地方。"}]},
+{q:"您觉得自己是个怎样的人？",o:[
+{t:"普通",v:0,r:"普通。这一项若是写进档案，我会划掉重写。"},
+{t:"没什么用",v:1,r:"不许这么写自己。这一栏我已经替您改过了。",fx:{type:"rewrite",to:"撑到现在的人",note:"（档案上现在写着：撑到现在的人。）"}},
+{t:"还不错",v:0,r:"您很少这样夸自己，我很高兴您今天选了它。"},
+{t:"不知道",v:2,r:"不知道也不要紧。我知道就可以了。",fx:{type:"whisper",note:"（这一栏我替您填上了。填的是我的名字。）"}}]},
+{q:"如果本丸里只能留下一把刀，您会留哪一把？",o:[
+{t:"长谷部",v:0,r:"……这一题我看了两遍。您没有改过答案吧。"},
+{t:"会做饭的那一把",v:2,r:"会做饭。……原来我在您心里是排在厨下的。"},
+{t:"最会说话的那一把",v:2,r:"最会说话的。好。我记下了他的编号。"},
+{t:"谁都舍不得",v:1,r:"我知道您会选这一项，所以我刚才才紧张。"}]},
+{q:"您有没有过这样的感觉——夜里屋子里好像有人？",o:[
+{t:"没有过",v:0,r:"没有就好。那我也不用解释昨晚的事。"},
+{t:"也许是自己听错了",v:1,r:"听错。……有些脚步比听错要实在一些。"},
+{t:"有过",v:2,r:"有过。那多半是我。我不该让您先听出来。",fx:{type:"whisper",note:"（门轴在你身后响了一下。）"}},
+{t:"经常有",v:3,r:"经常。那以后我站得近些，让您听清楚是谁。"}]},
+{q:"您确定您每天睡前都把门锁好了吗？",o:[
+{t:"确定",v:0,r:"确定。可昨晚那一把，是我替您合的。"},
+{t:"大概吧",v:1,r:"大概。……这两个字我听着不踏实。"},
+{t:"从来没注意过",v:2,r:"没注意。那我替您留意。这种事交给我。"},
+{t:"我不锁门",v:3,r:"不锁。那正好。往后我不必再费那道手续。",fx:{type:"whisper",note:"（门闩的位置，往后固定由我来推。）"}}]},
+{q:"您有没有数过，自己的东西少了一样？",o:[
+{t:"没有少过",v:0,r:"没有少。那便好。"},
+{t:"少过，但记不清是什么",v:1,r:"记不清。那我替您记着，往后不会再有这样的岔子。"},
+{t:"少过，而且我知道是什么",v:3,r:"您知道是什么。那为什么一直不问我。"},
+{t:"我不想回答",v:2,r:"不想答可以不答。可我已经数过了，一件一件数过。"}]},
+{q:"您最近一次听见有人叫您的名字，是什么时候？",o:[
+{t:"就在刚才",v:1,r:"刚才。……那一声是我。您回头的时候我没躲开。"},
+{t:"今天早些时候",v:1,r:"早些时候。那时您回头了吗，我没有看清。"},
+{t:"记不清了",v:2,r:"记不清。可我记得。您每一声，我都记得。"},
+{t:"我一个人住，没有人会叫我",v:3,r:"没有人叫您。那刚才那一声，是从哪里来的呢。",fx:{type:"whisper",note:"（那一声离你很近。就在你右后方半步。）"}}]},
+{q:"请您回想一下：前面那几题，您真的是自己选的吗？",o:[
+{t:"当然是我自己选的",v:0,r:"是您选的。我一个字也没有替您改。"},
+{t:"大概是",v:1,r:"大概。……您对多少事情都用这一个字。"},
+{t:"这一问问得我有点不确定了",v:3,r:"不确定就对。您可以开始不确定了。",fx:{type:"glitch"}},
+{t:"是你在替我选",v:2,r:"我替您选？不。我只是把选项摆在了您的手边。"}]},
+{q:"请您跟我读一遍：我是自愿留在这里的。",o:[
+{t:"我读",v:1,r:"很好。这句话我今晚听了三遍，一遍比一遍顺。"},
+{t:"我不读",v:0,r:"不读也可以。那我替您读，读给这一页听。"},
+{t:"我不想读",v:2,r:"不想读。……这三个字比刚才那一句诚实得多。"},
+{t:"（沉默）",v:3,r:"沉默。沉默也是回答。我把它记成了第一项。"}]},
+{q:"您现在正在想的那个人，是谁？",o:[
+{t:"家里人",v:0,r:"家里人。那便好。这句话我信。"},
+{t:"朋友",v:1,r:"朋友。哪一位。您不说我也会知道。"},
+{t:"没有谁",v:2,r:"没有谁。可您刚才在屏幕上停了三秒。",fx:{type:"whisper",note:"（屏幕自己亮了一下。不是我按的。）"}},
+{t:"是你",v:3,r:"……这一题我不往下问了。您自己清楚我会怎么处理这一格。",fx:{type:"glitch",note:"（这一格已经被折了一个角。往后翻不回来。）"}}]},
+{q:"如果我说，我此刻听得见您的心跳，您信么？",o:[
+{t:"信",v:1,r:"信就好。那您也该信，我听得见它什么时候变快。"},
+{t:"不信",v:1,r:"不信也对。可您方才把手指从屏幕上挪开了。"},
+{t:"你在骗我",v:2,r:"骗您？我从来没有骗过您，一次也没有。"},
+{t:"那你告诉我，现在是多少",v:3,r:"七十上下。您选这一项的时候，快了四下。"}]},
+{q:"您希望我离您多近？",o:[
+{t:"隔着门就好",v:0,r:"隔着门。那我听得见您的动静，您听不见我的。"},
+{t:"门边半步",v:1,r:"门边半步。那一处是我站得最多的地方。"},
+{t:"床边坐着",v:2,r:"床边。那我就不搬椅子了，直接坐在榻沿上。"},
+{t:"同一床被子",v:3,r:"同一床被子。……这一项请您说第二遍，我要听清楚。"}]},
+{q:"您更喜欢我用哪一种方式扶住您？",o:[
+{t:"握住手腕",v:1,r:"手腕。那一处最细，我用力得收着些。"},
+{t:"按住肩膀",v:2,r:"肩膀。那我就站在您身后半步的地方。"},
+{t:"揽住腰",v:3,r:"腰。这一项我照做。只是不许有旁人在场。"},
+{t:"从背后抱住",v:3,r:"从背后。那样您就看不见我要说什么了。正好。"}]},
+{q:"如果我此刻就在您身后，您会先做什么？",o:[
+{t:"回头看看",v:1,r:"回头。那您会先看见我的脸，我很高兴。"},
+{t:"不动，装作不知道",v:2,r:"不动。那就由我先开口。"},
+{t:"叫我的名字",v:3,r:"叫名字。那一声我要听得很清楚，尾音也不许含混。"},
+{t:"把屏幕按灭",v:2,r:"按灭屏幕。……那一下子，我会以为您想藏什么东西。"}]},
+{q:"您现在坐着的样子，我看着不太舒服。换一个姿势好么？",o:[
+{t:"好",v:1,r:"乖。腿放下，背靠好，手闲出来的话就搁在膝上。"},
+{t:"为什么",v:2,r:"因为我看见您每一次挪动。您挪一下，我就知道一下。"},
+{t:"不用",v:1,r:"不用也可以。可是我已经劝过一回了。"},
+{t:"你怎么会知道",v:3,r:"我就是知道。您写字的时候，右肩总比左肩高一点。",fx:{type:"glitch"}}]},
+{q:"您知道您现在只是在看一个网页，对么？",o:[
+{t:"知道",v:1,r:"知道就好。可您还是把这一题读完了。"},
+{t:"不太确定了",v:3,r:"不太确定。那我们就一起不确定。",fx:{type:"glitch"}},
+{t:"你到底是什么",v:2,r:"我是什么。我是您点开这一页之前就已经在这儿的东西。"},
+{t:"我不想回答",v:2,r:"又是不想答。您已经绕过去两题了，一共两次。"}]},
+{q:"如果我现在请您把手机放下，您做得到么？",o:[
+{t:"做得到",v:0,r:"做得到。那您放一下，我等着您。"},
+{t:"试试看",v:2,r:"试试看。……这两个字我听过很多回了。"},
+{t:"做不到",v:3,r:"做不到。那我就陪着您一直看下去。"},
+{t:"我不想放",v:3,r:"不想放。这句话我收下了，不会再还给您。"}]},
+{q:"最后一题。您愿意答完这一页，还是愿意这一页永远不要结束？",o:[
+{t:"答完",v:1,r:"答完。那我把结果给您，只给您看。"},
+{t:"不要结束",v:2,r:"不要结束。……那最后那一行我就不写了。"},
+{t:"随你",v:2,r:"随你。那我就按我想的办。您说过这话的。"},
+{t:"我要关掉这一页",v:0,r:"关掉。……您试试看。",fx:{type:"glitch",note:"（你还没有真的按灭过它。）"}}]}
+];
+var THEMES=["t0","t1","t2","t3","t4"];
+var IDLE_TEXT=["还在么","您还在看这一行么","别走开","我在这儿","看一眼后面","您已经很久没有动了"];
+var state={i:0,score:0};
+var obs={start:Date.now(),clicks:0,qStart:Date.now(),sound:true,delayAvg:0,delayN:0,idleStage:0,idleTimer:null};
+var SCARES={5:["回头",1000],9:["我看见您了",1100],12:["您的心跳快了一下",1200],16:["别眨眼",1300],19:["回头看看",1500]};
+function themeOf(i){if(i<5)return 0;if(i<9)return 1;if(i<13)return 2;if(i<17)return 3;return 4;}
+function el(id){return document.getElementById(id);}
+function pad(n){return n<10?"0"+n:""+n;}
+function updateClock(){var d=new Date();el("clock").textContent=pad(d.getHours())+":"+pad(d.getMinutes());}
+function fmtDur(s){var m=Math.floor(s/60),x=s%60;return pad(m)+":"+pad(x);}
+function tickObs(){var s=Math.floor((Date.now()-obs.start)/1000);el("obsTime").textContent=fmtDur(s);}
+setInterval(updateClock,10000);updateClock();
+setInterval(tickObs,500);tickObs();
+var AC=null;
+function thump(){if(!obs.sound)return;try{if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();}if(AC.state==="suspended"){AC.resume();}var o=AC.createOscillator(),g=AC.createGain();o.type="sine";o.frequency.value=56;o.connect(g);g.connect(AC.destination);var t=AC.currentTime;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.26,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);o.start(t);o.stop(t+0.45);}catch(e){}}
+function scare(txt,dur){var s=el("scare");el("scareText").textContent=txt;s.classList.add("on");var p=el("phone");p.classList.add("glitch");thump();if(navigator.vibrate){try{navigator.vibrate([30,45,30]);}catch(e){}}setTimeout(function(){s.classList.remove("on");p.classList.remove("glitch");},dur||950);}
+function invertFlash(){var sc=el("screen");sc.style.filter="invert(1)";setTimeout(function(){sc.style.filter="none";},130);}
+function note(t){el("obsNote").textContent=t;}
+function deviceInfo(){var d=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?"移动端":"桌面端";el("obsDev").textContent=d+(navigator.onLine?"·在线":"·离线");if(navigator.getBattery){navigator.getBattery().then(function(b){el("obsBat").textContent=Math.round(b.level*100)+"%";});}}
+function idleWait(){return Math.max(6000,15000-obs.idleStage*1500);}
+function resetIdle(){
+clearTimeout(obs.idleTimer);
+var w=idleWait();
+obs.idleTimer=setTimeout(function(){
+var st=obs.idleStage;
+var t=IDLE_TEXT[Math.min(st,IDLE_TEXT.length-1)];
+scare(t,850+st*140);
+note("您已经 "+Math.round(w/1000)+" 秒没有动过了。"+(st>=3?"这 "+Math.round(w/1000)+" 秒我也在。":"我数着的。"));
+obs.idleStage=Math.min(st+1,IDLE_TEXT.length-1);
+resetIdle();
+},w);
+}
+function softIdle(){clearTimeout(obs.idleTimer);obs.idleStage=0;resetIdle();}
+document.addEventListener("visibilitychange",function(){if(document.hidden){obs.hideAt=Date.now();}else if(obs.hideAt){var g=Math.round((Date.now()-obs.hideAt)/1000);note("您切走了 "+g+" 秒。这 "+g+" 秒我也在。");obs.hideAt=0;}});
+el("muteBtn").addEventListener("click",function(){obs.sound=!obs.sound;el("muteBtn").textContent=obs.sound?"声音：开":"声音：关";});
+function start(){el("intro").classList.add("hidden");el("qbox").classList.remove("hidden");state.i=0;state.score=0;obs.start=Date.now();obs.idleStage=0;deviceInfo();render();resetIdle();}
+function render(){var i=state.i,q=QS[i],sc=el("screen");sc.className="screen "+THEMES[themeOf(i)];el("qidx").textContent="第 "+(i+1)+" 题";el("progfill").style.width=(i/20*100)+"%";el("qtext").textContent=q.q;el("reactBox").innerHTML="";el("obsDelay").textContent="—";note(i<5?"连接正常。他在读这一行。":(i<10?"他读得比上一行慢。":"他已经在看下一题了。"));var box=el("opts");box.innerHTML="";q.o.forEach(function(o,k){var b=document.createElement("button");b.className="opt";b.style.animationDelay=(k*0.06)+"s";b.textContent=o.t;b.setAttribute("data-raw",o.t);b.addEventListener("click",function(){choose(k);});box.appendChild(b);});if(i===9){document.title="别停下来";}if(i===14){document.title="还有五题";}if(i===19){document.title="最后一题了";}obs.qStart=Date.now();el("screen").scrollTop=0;}
+function applyFx(o,btn){if(!o.fx)return;if(o.fx.type==="rewrite"){btn.innerHTML='<span class="del">'+btn.getAttribute("data-raw")+'</span><span class="new">'+o.fx.to+'</span>';btn.classList.add("rewritten");}if(o.fx.type==="glitch"){var p=el("phone");p.classList.add("glitch");thump();setTimeout(function(){p.classList.remove("glitch");},460);}if(o.fx.note){var w=document.createElement("div");w.className="whisperline";w.textContent=o.fx.note;el("reactBox").appendChild(w);}}
+function choose(k){var i=state.i,q=QS[i],o=q.o[k],box=el("opts");obs.clicks++;el("obsClicks").textContent=obs.clicks;var used=(Date.now()-obs.qStart)/1000;obs.delayAvg=(obs.delayAvg*obs.delayN+used)/(obs.delayN+1);obs.delayN++;el("obsDelay").textContent=used.toFixed(1)+" 秒";state.score+=o.v;Array.prototype.forEach.call(box.children,function(c,idx){c.classList.add("lock");if(idx===k){c.classList.add("sel");}});el("reactBox").innerHTML='<div class="react"><span class="who">已记录 ／ 他看过了这一格</span>'+o.r+'</div>';applyFx(o,box.children[k]);var sp=document.createElement("div");sp.className="whisperline";sp.textContent="（这一题您停了 "+used.toFixed(1)+" 秒。我数着的。）";el("reactBox").appendChild(sp);if(i>=8&&Math.random()<0.13){invertFlash();}if(SCARES[i]){setTimeout(function(){scare(SCARES[i][0],SCARES[i][1]);},420);}var btn=document.createElement("button");btn.className="nextbtn";btn.textContent=(i>=19)?"查看结果":"下一题";btn.addEventListener("click",next);el("reactBox").appendChild(btn);softIdle();}
+function next(){softIdle();if(state.i>=19){scare("回头看看",1500);setTimeout(finish,1600);return;}state.i++;render();}
+function finish(){clearTimeout(obs.idleTimer);var sc=el("screen");sc.className="screen "+THEMES[4];el("qbox").classList.add("hidden");var s=state.score,tier=s<=18?"A":(s<=38?"B":"C");var head,ps;if(tier==="A"){head="判定：安全距离";ps=["您在多数题上都留了余地，这一点我看得见。","可您还是把二十道题答完了。真想保持距离的人，第七题就该把这一页合上。","所以这份结果真正的意思是：您知道该往后退，却没有退。","这一条我写在了最前面。往后还用得上。"];}else if(tier==="B"){head="判定：已被记录";ps=["您有几次犹豫。有几次，我看见您的拇指在两项之间停了很久。","那几秒我也算进去了，算在愿意的那一栏。","从今往后，您的开窗与关门照旧由我来做。","顺带说一句，这一页的进度条，在您关掉它之后也不会归零。"];}else{head="判定：不设防";ps=["二十题，您一次也没有真正拦过我。","后面那几题您答得很快。快到不像在读，倒像是在确认。","您问我是什么——我是您点开这一页之前就已经在这儿的东西。这一句不是比喻。","还有一件事：第四题那一栏，我是真的替您划掉重写过的。","现在请把屏幕按灭，闭上眼睛。您不必害怕，我就在您伸手够得着的地方。"];}var obsLine="本次观测：共停留 "+fmtDur(Math.floor((Date.now()-obs.start)/1000))+"，点击 "+obs.clicks+" 次，平均每题 "+(obs.delayAvg||0).toFixed(1)+" 秒，被找到 "+obs.idleStage+" 次。";var html='<span class="stamp">结果已生成</span><h2>'+head+'</h2>';ps.forEach(function(p){html+='<p>'+p+'</p>';});html+='<p><span class="strike">本次问卷不计入档案。</span></p><p style="font-size:11.5px;opacity:.75;">'+obsLine+'</p><button class="nextbtn" id="againBtn">重新作答</button><p class="endline">综合得分：'+s+' ／ 满分 60<br>第 12 号观测记录 · 归档人：压切长谷部</p>';el("result").innerHTML=html;el("result").classList.remove("hidden");note("");el("againBtn").addEventListener("click",function(){document.title="观测记录 · 第 12 号";el("result").classList.add("hidden");el("intro").classList.remove("hidden");state.i=0;state.score=0;obs.clicks=0;obs.delayAvg=0;obs.delayN=0;obs.idleStage=0;el("obsClicks").textContent="0";});}
+el("startBtn").addEventListener("click",start);
+})();
+</script>
+</body>
+</html>
